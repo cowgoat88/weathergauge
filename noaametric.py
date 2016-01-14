@@ -21,32 +21,35 @@ def get_html():
 	time.sleep(0.1)
 	html = ''.join(response.read())
 	html_text = re.search('</SCRIPT>.*CONTENT ENDS HERE', html, re.MULTILINE|re.DOTALL)
-	return html_text.group(0)
-
-#Main loop	
+	html_date = re.search('(\d*)\s(AM|PM)\sPST\s(\w{3})\s(\w{3})\s(\d*)\s(\d{4})', html_text.group(0))
+	timestamp = html_date.group(1)+html_date.group(2)+'_'+html_date.group(4)+html_date.group(5)+'_'+html_date.group(6)
+	
+	return html_text.group(0), timestamp
+	
 for i in xrange(1,50):
 	
-	html = get_html()
+	html,timestamp = get_html()
 	file_id = str(hash(html))
 	with open('file_id_file.txt','a+') as f_id:
 		f_id_list = f_id.readlines()
 		f_id_list = [x.rstrip() for x in f_id_list]
 		if file_id in f_id_list:
 			print 'file %s already exists' % file_id
-			pass
+			break
 		else:
-			print 'file %s created' % file_id
+			print 'file %s created - %s' % file_id, timestamp
 			create_metrics(html)
 			f_id.write(file_id+'\n')
-			file_name = 'noaa_html_'+time.strftime('%d%m%y-%H%M%S_')+file_id+'.txt'
+			file_name = '\html\noaa_html_'+time.strftime('%d%m%y-%H%M%S_')+file_id+'.txt'
 			with open(file_name, 'w+') as f_html:
 				f_html.write(html)
-				f_html.close()
+				
+			
 	f_id.close()
 	
 	
 	
 #add more variables for metrics
-#integrate date/time code into ratings
-#integrate hash of htmls and save into folder for reference
+#integrate date/time code into ratings - timestamp regex created
+#write files to subfolder 'html'
 
