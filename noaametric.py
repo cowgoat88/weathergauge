@@ -38,11 +38,12 @@ for i in xrange(1,50):
 			break
 		else:
 			print 'file %s created - %s' % file_id, timestamp
-			create_metrics(html)
+			metric = create_metrics(html)
 			f_id.write(file_id+'\n')
-			file_name = '\html\noaa_html_'+time.strftime('%d%m%y-%H%M%S_')+file_id+'.txt'
-			with open(file_name, 'w+') as f_html:
-				f_html.write(html)
+			file_name = 'noaa_html_metrics.txt
+			file_data = metric+'\t'+time.strftime('%d%m%y-%H%M%S_')+'\n'
+			with open(file_name, 'a+') as f_html:
+				f_html.write(file_data)
 				
 			
 	f_id.close()
